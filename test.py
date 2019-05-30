@@ -148,6 +148,28 @@ sc2 = StandardScaler()
 y_train = sc2.fit_transform(y_train)
 y_test = sc2.transform(y_test)
 
+
+
+import keras
+from keras.models import Sequential
+from keras.layers import Dense
+
+reg = Sequential()
+
+reg.add(Dense(units = 4, kernel_initializer='uniform', activation='relu', input_dim = 4))
+
+reg.add(Dense(units = 4, kernel_initializer='uniform', activation='relu'))
+
+reg.add(Dense(units = 1, kernel_initializer='uniform', activation='linear'))
+
+reg.compile(optimizer="adam", loss="mse", metrics=['mse', 'mae', 'mape'])
+
+
+reg.fit(X_train, y_train, batch_size=100, epochs=100)
+y_pred = reg.predict(X_test)
+
+
+"""
 reg = LinearRegression()
 reg = SVR(gamma='scale', C=1.0, epsilon=0.2)
 reg = PolynomialFeatures(degree = 4)
@@ -155,6 +177,8 @@ reg = RandomForestRegressor(n_estimators = 250, random_state = 0, min_samples_sp
 
 reg.fit(X_train, y_train)
 y_pred = reg.predict(X_test)
+"""
+
 
 r2 = r2_score(y_test, y_pred)  
 r2
