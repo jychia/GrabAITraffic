@@ -40,12 +40,6 @@ for i in range(row):
     b = dataset["day"][i] * 96 + a
     normalizedDayTime.append(b)
 
-
-for t in dataset["timestamp"].values:
-    time = t.split(":")
-    a = (int(time[0]) * 4) + (int(time[1]) / 15)
-    normalizedTime.append(a)
-    
 dataset["normalizedTime"] = normalizedTime
 dataset["normalizedDayTime"] = normalizedDayTime
 
