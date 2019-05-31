@@ -49,9 +49,59 @@ del normalizedTime, normalizedDayTime, time, a, b
 
 
 
+uniquelatitude = dataset['latitude'].unique().tolist()
+uniquelatitude.sort()
+numlatitude = len(uniquelatitude)
+difflatitude = uniquelatitude[1] - uniquelatitude[0]
+minlatitude = uniquelatitude[0]
+#for i in range(len(uniquelatitude)-1):
+#    diff = uniquelatitude[i+1] - uniquelatitude[i]
+#    print(diff)
+
+uniquelongitude = dataset['longitude'].unique().tolist()
+uniquelongitude.sort()
+numlongtitude = len(uniquelongitude)
+difflongitude = uniquelongitude[1] - uniquelongitude[0]
+minlongtitude = uniquelongitude[0]
+#for i in range(len(uniquelongitude)-1):
+#    diff = uniquelongitude[i+1] - uniquelongitude[i]
+#    print(diff)
+
+Xcoord = (dataset['longitude'].values - minlongtitude) / difflongitude
+Ycoord = (dataset['latitude'].values - minlatitude) / difflatitude
+
+dataset["Xcoord"] = Xcoord
+dataset["Ycoord"] = Ycoord
+
+
+
 dataset.to_csv(r'dataset.csv')
 
 
+
+
+res = {col:dataset[col].value_counts() for col in dataset.columns}
+
+
+
+#Plot to image ----------------------------
+
+d1t0 = [[0 for i in range(numlongtitude)] for j in range(numlatitude)]
+
+day1 = dataset[(dataset["day"].values == 1.0)]
+day1time1 = day1[(day1["normalizedTime"].values == 48)]
+
+for i in range(len(day1time1)):
+    X = day1time1["Xcoord"].values[i]
+    Y = day1time1["Ycoord"].values[i]
+    d1t0[int(Y)][int(X)] = day1time1["demand"].values[i] * 255
+    
+    
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.set_title('colorMap')
+plt.imshow(d1t0)
+#---------------------------------------------   
 
 
 # Plotting
@@ -71,18 +121,24 @@ plt.show()
 geo1 = dataset[(dataset["geohash6"]=="qp03wc")]
 plt.scatter(geo1["normalizedDayTime"].values, geo1["demand"].values, color = 'red')
 
-geo1 = dataset[(dataset["geohash6"]=="qp03wc")]
+geo1 = dataset[(dataset["geohash6"]=="qp03wf")]
 geo1day1 = geo1[(geo1["day"].values == 1.0)]
 plt.scatter(geo1day1["normalizedTime"].values, geo1day1["demand"].values, color = 'red')
 
-geo1day2 = geo1[(geo1["day"].values == 2.0)]
-plt.scatter(geo1day2["normalizedTime"].values, geo1day2["demand"].values, color = 'blue')
-
-geo1day3 = geo1[(geo1["day"].values == 3.0)]
-plt.scatter(geo1day3["normalizedTime"].values, geo1day3["demand"].values, color = 'green')
-
 geo1day4 = geo1[(geo1["day"].values == 4.0)]
-plt.scatter(geo1day4["normalizedTime"].values, geo1day4["demand"].values, color = 'black')
+plt.scatter(geo1day4["normalizedTime"].values, geo1day4["demand"].values, color = 'blue')
+
+geo1day8 = geo1[(geo1["day"].values == 8.0)]
+plt.scatter(geo1day8["normalizedTime"].values, geo1day8["demand"].values, color = 'green')
+
+geo1day11 = geo1[(geo1["day"].values == 11.0)]
+plt.scatter(geo1day11["normalizedTime"].values, geo1day11["demand"].values, color = 'black')
+
+geo1day15 = geo1[(geo1["day"].values == 15.0)]
+plt.scatter(geo1day15["normalizedTime"].values, geo1day15["demand"].values, color = 'yellow')
+
+geo1day18 = geo1[(geo1["day"].values == 18.0)]
+plt.scatter(geo1day18["normalizedTime"].values, geo1day18["demand"].values, color = 'purple')
 
 plt.title('qp03wc day 1-4')
 plt.xlabel('Normalized Time')
@@ -121,9 +177,6 @@ y_train = dataset_train["demand"].values
 
 X_test = dataset_test[["latitude","longitude","day","normalizedTime"]].values
 y_test = dataset_test["demand"].values
-
-
-
 
 
 
