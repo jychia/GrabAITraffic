@@ -75,7 +75,7 @@ dataset["Ycoord"] = Ycoord
 
 
 
-dataset.to_csv(r'dataset.csv')
+dataset.to_csv(r'dataset.csv', index_col = False)
 
 
 
@@ -92,7 +92,7 @@ duplicateRowsDF = df[df.duplicated()]
 
 
 #Plot to image ----------------------------
-
+dataset = pd.read_csv('dataset.csv', quoting = 3)
 d1t0 = [[0 for i in range(numlongtitude)] for j in range(numlatitude)]
 
 day1 = dataset[(dataset["day"].values == 1.0)]
@@ -111,7 +111,7 @@ plt.imshow(d1t0)
 
 import png
 s = [[int(c) for c in row] for row in d1t0]
-w = png.Writer(len(s[0]), len(s), greyscale=True, bitdepth=1)
+w = png.Writer(len(s[0]), len(s), greyscale=True)
 f = open('d1t0.png', 'wb')
 w.write(f, s)
 f.close()
