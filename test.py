@@ -83,6 +83,13 @@ dataset.to_csv(r'dataset.csv')
 res = {col:dataset[col].value_counts() for col in dataset.columns}
 
 
+#Test duplicate with different demand -------------------
+df = dataset.drop(columns=['demand'])
+duplicateRowsDF = df[df.duplicated()]
+#-------------------------------------------------------
+
+
+
 
 #Plot to image ----------------------------
 
@@ -101,6 +108,13 @@ fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.set_title('colorMap')
 plt.imshow(d1t0)
+
+import png
+s = [[int(c) for c in row] for row in d1t0]
+w = png.Writer(len(s[0]), len(s), greyscale=True, bitdepth=1)
+f = open('d1t0.png', 'wb')
+w.write(f, s)
+f.close()
 #---------------------------------------------   
 
 
@@ -197,9 +211,6 @@ y_test = y_test.reshape(-1,1)
 sc = StandardScaler()
 X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
-sc2 = StandardScaler()
-y_train = sc2.fit_transform(y_train)
-y_test = sc2.transform(y_test)
 
 
 
