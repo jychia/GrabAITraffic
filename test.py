@@ -73,9 +73,12 @@ Ycoord = (dataset['latitude'].values - minlatitude) / difflatitude
 dataset["Xcoord"] = Xcoord
 dataset["Ycoord"] = Ycoord
 
+dayofweek = dataset['day'].values % 7
+dataset["dayOfWeek"] = dayofweek
 
 
-dataset.to_csv(r'dataset.csv', index_col = False)
+
+dataset.to_csv(r'dataset.csv', index  = False)
 
 
 
@@ -95,8 +98,8 @@ duplicateRowsDF = df[df.duplicated()]
 dataset = pd.read_csv('dataset.csv', quoting = 3)
 d1t0 = [[0 for i in range(numlongtitude)] for j in range(numlatitude)]
 
-day1 = dataset[(dataset["day"].values == 1.0)]
-day1time1 = day1[(day1["normalizedTime"].values == 48)]
+day1 = dataset[(dataset["day"].values == 2.0)]
+day1time1 = day1[(day1["normalizedTime"].values == 90)]
 
 for i in range(len(day1time1)):
     X = day1time1["Xcoord"].values[i]
@@ -224,16 +227,16 @@ reg.add(Dense(units = 4, kernel_initializer='uniform', activation='relu', input_
 
 reg.add(Dense(units = 4, kernel_initializer='uniform', activation='relu'))
 
-reg.add(Dense(units = 1, kernel_initializer='uniform', activation='linear'))
+reg.add(Dense(units = 1, kernel_initializer='uniform'))
 
-reg.compile(optimizer="adam", loss="mse", metrics=['mse', 'mae', 'mape'])
+reg.compile(optimizer="adam", loss="mse")
 
 
 reg.fit(X_train, y_train, batch_size=100, epochs=100)
 y_pred = reg.predict(X_test)
 
 
-"""
+
 reg = LinearRegression()
 reg = SVR(gamma='scale', C=1.0, epsilon=0.2)
 reg = PolynomialFeatures(degree = 4)
@@ -241,7 +244,7 @@ reg = RandomForestRegressor(n_estimators = 250, random_state = 0, min_samples_sp
 
 reg.fit(X_train, y_train)
 y_pred = reg.predict(X_test)
-"""
+
 
 
 r2 = r2_score(y_test, y_pred)  
