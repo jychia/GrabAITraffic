@@ -37,7 +37,7 @@ for i in range(row):
     time = dataset["timestamp"][i].split(":")
     a = (int(time[0]) * 4) + (int(time[1]) / 15)
     normalizedTime.append(a)
-    b = dataset["day"][i] * 96 + a
+    b = (dataset["day"][i]-1) * 96 + a
     normalizedDayTime.append(b)
 
 dataset["normalizedTime"] = normalizedTime
@@ -76,7 +76,9 @@ dataset["Ycoord"] = Ycoord
 dayofweek = dataset['day'].values % 7
 dataset["dayOfWeek"] = dayofweek
 
-
+del Xcoord, Ycoord, dayofweek
+del col, difflatitude, difflongitude, i, minlatitude, minlongtitude, row
+del uniquelongitude, uniquelatitude
 
 dataset.to_csv(r'dataset.csv', index  = False)
 
@@ -96,20 +98,41 @@ duplicateRowsDF = df[df.duplicated()]
 
 #Plot to image ----------------------------
 dataset = pd.read_csv('dataset.csv', quoting = 3)
-d1t0 = [[0 for i in range(numlongtitude)] for j in range(numlatitude)]
+imgseries = []
 
-day1 = dataset[(dataset["day"].values == 2.0)]
-day1time1 = day1[(day1["normalizedTime"].values == 90)]
+for d in range(1,dataset["day"].values.max()+1):
+    for t in range(int(dataset["normalizedTime"].values.max()+1)):
+        img = np.zeros(shape=(numlatitude,numlongtitude))
+        day = dataset[(dataset["day"].values == d)]
+        daytime = day[(day["normalizedTime"].values == t)]
+    
+        for i in range(len(daytime)):
+            X = daytime["Xcoord"].values[i]
+            Y = daytime["Ycoord"].values[i]
+            img[int(Y)][int(X)] = daytime["demand"].values[i]
+        imgseries.append(img)
 
-for i in range(len(day1time1)):
-    X = day1time1["Xcoord"].values[i]
-    Y = day1time1["Ycoord"].values[i]
-    d1t0[int(Y)][int(X)] = day1time1["demand"].values[i] * 255
-    
-    
+
+#imgseries = np.dstack(imgseries)
+
 fig = plt.figure()
 ax = fig.add_subplot(111)
 ax.set_title('colorMap')
+plt.imshow(imgseries[:,:,41])
+
+
+
+
+d1t0 = np.zeros(shape=(numlatitude,numlongtitude))
+day1 = dataset[(dataset["day"].values == 1)]
+day1time0 = day1[(day1["normalizedTime"].values == 0)]
+for i in range(len(day1time0)):
+    X = day1time0["Xcoord"].values[i]
+    Y = day1time0["Ycoord"].values[i]
+    d1t0[int(Y)][int(X)] = day1time0["demand"].values[i] * 255
+fig = plt.figure()
+ax = fig.add_subplot(111)
+ax.set_title('day1time0')
 plt.imshow(d1t0)
 
 import png
@@ -249,4 +272,88 @@ y_pred = reg.predict(X_test)
 
 r2 = r2_score(y_test, y_pred)  
 r2
+
+
+
+
+
+
+
+
+#test CNN LSTM
+
+# Creating a data structure with 95 timesteps and 1 output
+X_train = []
+y_train = []
+for i in range(96, imgseries.shape[2]):
+    X_train.append(imgseries[:,:,i-96:i])
+    y_train.append(imgseries[:,:,i])
+X_train, y_train = np.array(X_train), np.array(y_train)
+
+from keras.models import Sequential
+from keras.layers import Conv2D
+from keras.layers import MaxPooling2D
+from keras.layers import Flatten
+from keras.layers import Dense
+from keras.layers import LSTM
+from keras.layers import Dropout
+from keras.layers import TimeDistributed
+from keras.layers import InputLayer
+
+
+model = Sequential()
+
+model.add(TimeDistributed(Conv2D(32,(3,3), activation = 'relu'),input_shape=(95,46,36,1))) 
+print (model.output_shape)
+
+model.add(TimeDistributed(MaxPooling2D(pool_size = (2, 2))))
+print (model.output_shape)
+
+model.add(TimeDistributed(Conv2D(32,(3,3), activation = 'relu'))) 
+print (model.output_shape)
+
+model.add(TimeDistributed(MaxPooling2D(pool_size = (2, 2))))
+print (model.output_shape)
+
+model.add(TimeDistributed(Flatten()))
+print (model.output_shape)
+
+model.add(LSTM(units = 50, return_sequences = True))
+print (model.output_shape)
+
+model.add(Dropout(0.2))
+print (model.output_shape)
+
+model.add(LSTM(units = 50, return_sequences = True))
+print (model.output_shape)
+
+model.add(Dropout(0.2))
+print (model.output_shape)
+
+model.add(LSTM(units = 50, return_sequences = True))
+print (model.output_shape)
+
+model.add(Dropout(0.2))
+print (model.output_shape)
+
+model.add(LSTM(units = 50))
+print (model.output_shape)
+
+model.add(Dropout(0.2))
+print (model.output_shape)
+
+model.add(Dense(units = 1656))
+print (model.output_shape)
+
+# Compiling the RNN
+model.compile(optimizer = 'adam', loss = 'mse')
+
+# Fitting the RNN to the Training set
+model.fit(X_train, y_train, epochs = 100, batch_size = 32)
+
+
+
+
+
+
 
