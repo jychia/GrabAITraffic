@@ -102,16 +102,16 @@ imgseries = []
 
 for d in range(1,dataset["day"].values.max()+1):
     for t in range(int(dataset["normalizedTime"].values.max()+1)):
-        img = np.zeros(shape=(numlatitude,numlongtitude))
+        img = np.zeros(shape=(numlatitude,numlongtitude,1))
         day = dataset[(dataset["day"].values == d)]
         daytime = day[(day["normalizedTime"].values == t)]
     
         for i in range(len(daytime)):
             X = daytime["Xcoord"].values[i]
             Y = daytime["Ycoord"].values[i]
-            img[int(Y)][int(X)] = daytime["demand"].values[i]
+            img[int(Y)][int(X)][0] = daytime["demand"].values[i]
         imgseries.append(img)
-
+imgseries = np.array(imgseries)
 
 #imgseries = np.dstack(imgseries)
 
@@ -353,7 +353,53 @@ model.fit(X_train, y_train, epochs = 100, batch_size = 32)
 
 
 
+#test Conv-LSTM
+
+X_train = []
+y_train = []
+length = 3000
+for i in range(96, length):
+    X_train.append(imgseries[i-96:i,:,:,:])
+    y_train.append(imgseries[i-95:i+1,:,:,:])
+X_train, y_train = np.array(X_train), np.array(y_train)
 
 
 
 
+from keras.models import Sequential
+from keras.layers.convolutional import Conv3D
+from keras.layers.convolutional_recurrent import ConvLSTM2D
+from keras.layers.normalization import BatchNormalization
+
+seq = Sequential()
+seq.add(ConvLSTM2D(filters=64, kernel_size=(3, 3),
+                   input_shape=(None, 46, 36, 1),
+                   padding='same', return_sequences=True))
+seq.add(BatchNormalization())
+
+seq.add(ConvLSTM2D(filters=64, kernel_size=(3, 3),
+                   padding='same', return_sequences=True))
+seq.add(BatchNormalization())
+
+seq.add(ConvLSTM2D(filters=64, kernel_size=(3, 3),
+                   padding='same', return_sequences=True))
+seq.add(BatchNormalization())
+
+seq.add(ConvLSTM2D(filters=64, kernel_size=(3, 3),
+                   padding='same', return_sequences=True))
+seq.add(BatchNormalization())
+
+seq.add(Conv3D(filters=1, kernel_size=(3, 3, 3),
+               activation='sigmoid',
+               padding='same', data_format='channels_last'))
+seq.compile(loss='mse', optimizer='adam')
+
+seq.fit(X_train, y_train, batch_size=10,
+        epochs=300, validation_split=0.05)
+
+
+which = len(X_train)-1
+X_test = X_train[len(X_train)-1][::, ::, ::, ::]
+
+new_pos = seq.predict(X_test[np.newaxis, ::, ::, ::, ::])
+new = new_pos[::, -1, ::, ::, ::]
