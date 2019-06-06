@@ -60,15 +60,15 @@ minlatitude = uniquelatitude[0]
 
 uniquelongitude = dataset['longitude'].unique().tolist()
 uniquelongitude.sort()
-numlongtitude = len(uniquelongitude)
+numlongitude = len(uniquelongitude)
 difflongitude = uniquelongitude[1] - uniquelongitude[0]
-minlongtitude = uniquelongitude[0]
+minlongitude = uniquelongitude[0]
 #for i in range(len(uniquelongitude)-1):
 #    diff = uniquelongitude[i+1] - uniquelongitude[i]
 #    print(diff)
 
-Xcoord = (dataset['longitude'].values - minlongtitude) / difflongitude
-Ycoord = (dataset['latitude'].values - minlatitude) / difflatitude
+Xcoord = int((dataset['longitude'].values - minlongitude) / difflongitude)
+Ycoord = int((dataset['latitude'].values - minlatitude) / difflatitude)
 
 dataset["Xcoord"] = Xcoord
 dataset["Ycoord"] = Ycoord
@@ -77,7 +77,7 @@ dayofweek = dataset['day'].values % 7
 dataset["dayOfWeek"] = dayofweek
 
 del Xcoord, Ycoord, dayofweek
-del col, difflatitude, difflongitude, i, minlatitude, minlongtitude, row
+del col, difflatitude, difflongitude, i, minlatitude, minlongitude, row
 del uniquelongitude, uniquelatitude
 
 dataset.to_csv(r'dataset.csv', index  = False)
@@ -102,7 +102,7 @@ imgseries = []
 
 for d in range(1,dataset["day"].values.max()+1):
     for t in range(int(dataset["normalizedTime"].values.max()+1)):
-        img = np.zeros(shape=(numlatitude,numlongtitude,1))
+        img = np.zeros(shape=(int(dataset["Ycoord"].values.max()+1),int(dataset["Xcoord"].values.max()+1),1))
         day = dataset[(dataset["day"].values == d)]
         daytime = day[(day["normalizedTime"].values == t)]
     
@@ -123,7 +123,7 @@ plt.imshow(imgseries[:,:,41])
 
 
 
-d1t0 = np.zeros(shape=(numlatitude,numlongtitude))
+d1t0 = np.zeros(shape=(numlatitude,numlongitude))
 day1 = dataset[(dataset["day"].values == 1)]
 day1time0 = day1[(day1["normalizedTime"].values == 0)]
 for i in range(len(day1time0)):
@@ -373,6 +373,7 @@ from keras.layers.convolutional import Conv3D
 from keras.layers.convolutional_recurrent import ConvLSTM2D
 from keras.layers.normalization import BatchNormalization
 from keras.utils import multi_gpu_model
+from keras.models import load_model
 
 seq = Sequential()
 seq.add(ConvLSTM2D(filters=32, kernel_size=(3, 3),
@@ -401,9 +402,49 @@ seq.compile(loss='mse', optimizer='adam')
 seq.fit(X_train, y_train, batch_size=4,
         epochs=50, validation_split=0.05)
 
+seq.save('conv_lstm_time48_filter32_batch4.h5') 
+
+# returns a compiled model
+# identical to the previous one
+seq = load_model('conv_lstm_time48_filter32_batch4.h5')
+
 
 which = len(X_train)-1
 X_test = X_train[len(X_train)-1][::, ::, ::, ::]
 
 new_pos = seq.predict(X_test[np.newaxis, ::, ::, ::, ::])
 new = new_pos[::, -1, ::, ::, ::]
+
+
+
+col_names =  ['latitude', 'longitude', 'demand_prediction']
+newDF = pd.DataFrame()
+uniquelatitude = dataset['latitude'].unique().tolist()
+uniquelatitude.sort()
+numlatitude = len(uniquelatitude)
+difflatitude = uniquelatitude[1] - uniquelatitude[0]
+minlatitude = uniquelatitude[0]
+
+uniquelongitude = dataset['longitude'].unique().tolist()
+uniquelongitude.sort()
+numlongitude = len(uniquelongitude)
+difflongitude = uniquelongitude[1] - uniquelongitude[0]
+minlongitude = uniquelongitude[0]
+
+Xcoord = int((dataset['longitude'].values - minlongitude) / difflongitude)
+Ycoord = int((dataset['latitude'].values - minlatitude) / difflatitude)
+
+for i in range(new.shape[2]):
+    latitude = minlatitude + difflatitude * i
+    for j in range(new.shape[3]):
+        longitude = minlongitude + difflongitude * j
+        pred = {'latitude':latitude, 'longitude': longitude, 'demand_prediction': new[i][j]}
+        
+        
+
+        
+        
+        
+        
+        
+        
