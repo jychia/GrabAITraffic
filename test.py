@@ -413,7 +413,7 @@ seq = load_model('conv_lstm_time48_filter32_batch4_full.h5')
 
 
 
-length = imgseries.shape[0]-1000
+length = imgseries.shape[0]-2000
 X_test = imgseries[length-48:length,:,:,:]
 y_test = imgseries[length,:,:,0]
 
@@ -422,7 +422,7 @@ y_pred = new_pos[0, -1, ::, ::, 0]
 
 
 
-newDF = pd.DataFrame(columns = ['latitude', 'longitude', 'demand_prediction'])
+newDF = pd.DataFrame(columns = ['latitude', 'longitude', 'demand_prediction', 'demand'])
 uniquelatitude = dataset['latitude'].unique().tolist()
 uniquelatitude.sort()
 numlatitude = len(uniquelatitude)
@@ -440,10 +440,11 @@ for i in range(y_pred.shape[0]):
     latitude = minlatitude + difflatitude * i
     for j in range(y_pred.shape[1]):
         longitude = minlongitude + difflongitude * j
-        pred = pd.DataFrame({'latitude':[latitude], 'longitude': [longitude], 'demand_prediction': [y_pred[i][j]]})
+        pred = pd.DataFrame({'latitude':[latitude], 'longitude': [longitude], 'demand_prediction': [y_pred[i][j]], 'demand':[y_test[i][j]]})
         newDF = newDF.append(pred,ignore_index=True)
         
-        
+compare = newDF[(newDF['demand'] != 0)]
+normalizedDT = dataset[(dataset["normalizedDayTime"].values == length)]
 
 fig = plt.figure()
 ax = fig.add_subplot(121)
@@ -453,7 +454,8 @@ ax = fig.add_subplot(122)
 ax.set_title('pred')
 plt.imshow(y_pred)
         
-        
+r2 = r2_score(compare['demand'], compare['demand_prediction'])  
+r2
         
         
         

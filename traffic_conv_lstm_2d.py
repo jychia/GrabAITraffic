@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
-
+from sklearn.metrics import r2_score
 
 
 # Preprocess phase 1 - Process raw data & calculate extra columns
@@ -58,8 +58,8 @@ numlongitude = len(uniquelongitude)
 difflongitude = uniquelongitude[1] - uniquelongitude[0]
 minlongitude = uniquelongitude[0]
 
-Xcoord = int((dataset['longitude'].values - minlongitude) / difflongitude)
-Ycoord = int((dataset['latitude'].values - minlatitude) / difflatitude)
+Xcoord = (dataset['longitude'].values - minlongitude) / difflongitude
+Ycoord = (dataset['latitude'].values - minlatitude) / difflatitude
 
 dataset["Xcoord"] = Xcoord
 dataset["Ycoord"] = Ycoord
@@ -69,7 +69,7 @@ dataset["dayOfWeek"] = dayofweek
 
 del Xcoord, Ycoord, dayofweek
 del col, difflatitude, difflongitude, i, minlatitude, minlongitude, row
-del uniquelongitude, uniquelatitude
+del uniquelongitude, uniquelatitude, numlatitude, numlongitude
 
 dataset.to_csv(r'dataset.csv', index  = False)
 
@@ -106,14 +106,16 @@ X_train = []
 y_train = []
 length = imgseries.shape[0]-5
 timestep = 48
-#length = 4000
 for i in range(timestep, length):
     X_train.append(imgseries[i-timestep:i,:,:,:])
     y_train.append(imgseries[i-(timestep-1):i+1,:,:,:])
 X_train = np.array(X_train)
 y_train = np.array(y_train)
 
-del length
+X_test = imgseries[length-timestep:length,:,:,:]
+y_test = imgseries[length,:,:,0]
+
+del i
 
 print("Finish preparing training and testing data, start preparing Conv-LSTM-2D model")
 
@@ -156,7 +158,7 @@ print("Finish preparing Conv-LSTM-2D model, start training!")
 seq.fit(X_train, y_train, batch_size=4,
         epochs=50, validation_split=0.05)
 
-model_name = 'conv_lstm_time48_filter32_batch4.h5'
+model_name = 'conv_lstm_time48_filter32_lyr4_batch4.h5'
 
 seq.save(model_name) 
 
@@ -164,38 +166,48 @@ print("Finally finish training! Now start predicting")
 
 #seq = load_model(model_name)
 
-which = len(X_train)-1
-X_test = X_train[len(X_train)-1][::, ::, ::, ::]
+
+
 
 new_pos = seq.predict(X_test[np.newaxis, ::, ::, ::, ::])
-new = new_pos[::, -1, ::, ::, ::]
+y_pred = new_pos[0, -1, ::, ::, 0]
+
 
 print("Finish predicting, start post-processing prediction data")
 
-col_names =  ['latitude', 'longitude', 'demand_prediction']
-newDF = pd.DataFrame()
+
+newDF = pd.DataFrame(columns = ['latitude', 'longitude', 'demand_prediction', 'demand'])
 uniquelatitude = dataset['latitude'].unique().tolist()
 uniquelatitude.sort()
 numlatitude = len(uniquelatitude)
 difflatitude = uniquelatitude[1] - uniquelatitude[0]
-
 minlatitude = uniquelatitude[0]
+
 uniquelongitude = dataset['longitude'].unique().tolist()
 uniquelongitude.sort()
 numlongitude = len(uniquelongitude)
 difflongitude = uniquelongitude[1] - uniquelongitude[0]
 minlongitude = uniquelongitude[0]
 
-Xcoord = int((dataset['longitude'].values - minlongitude) / difflongitude)
-Ycoord = int((dataset['latitude'].values - minlatitude) / difflatitude)
 
-for i in range(new.shape[2]):
+for i in range(y_pred.shape[0]):
     latitude = minlatitude + difflatitude * i
-    for j in range(new.shape[3]):
+    for j in range(y_pred.shape[1]):
         longitude = minlongitude + difflongitude * j
-        pred = {'latitude':latitude, 'longitude': longitude, 'demand_prediction': new[i][j]}
+        pred = pd.DataFrame({'latitude':[latitude], 'longitude': [longitude], 'demand_prediction': [y_pred[i][j]], 'demand':[y_test[i][j]]})
+        newDF = newDF.append(pred,ignore_index=True)
+        
+compare = newDF[(newDF['demand'] != 0)]
+normalizedDT = dataset[(dataset["normalizedDayTime"].values == length)]
 
-
-
-
-
+fig = plt.figure()
+ax = fig.add_subplot(121)
+ax.set_title('actual')
+plt.imshow(y_test)
+ax = fig.add_subplot(122)
+ax.set_title('pred')
+plt.imshow(y_pred)
+        
+r2 = r2_score(compare['demand'], compare['demand_prediction'])  
+r2
+        
