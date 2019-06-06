@@ -409,11 +409,16 @@ seq.save('conv_lstm_time48_filter32_batch4_full.h5')
 seq = load_model('conv_lstm_time48_filter32_batch4_full.h5')
 
 
-which = len(X_train)-1
-X_test = X_train[len(X_train)-1][::, ::, ::, ::]
+
+
+
+
+length = imgseries.shape[0]-1000
+X_test = imgseries[length-48:length,:,:,:]
+y_test = imgseries[length,:,:,0]
 
 new_pos = seq.predict(X_test[np.newaxis, ::, ::, ::, ::])
-new = new_pos[::, -1, ::, ::, ::]
+y_pred = new_pos[0, -1, ::, ::, 0]
 
 
 
@@ -431,11 +436,11 @@ difflongitude = uniquelongitude[1] - uniquelongitude[0]
 minlongitude = uniquelongitude[0]
 
 
-for i in range(new.shape[1]):
+for i in range(y_pred.shape[0]):
     latitude = minlatitude + difflatitude * i
-    for j in range(new.shape[2]):
+    for j in range(y_pred.shape[1]):
         longitude = minlongitude + difflongitude * j
-        pred = pd.DataFrame({'latitude':[latitude], 'longitude': [longitude], 'demand_prediction': [new[0][i][j][0]]})
+        pred = pd.DataFrame({'latitude':[latitude], 'longitude': [longitude], 'demand_prediction': [y_pred[i][j]]})
         newDF = newDF.append(pred,ignore_index=True)
         
         
@@ -443,10 +448,10 @@ for i in range(new.shape[1]):
 fig = plt.figure()
 ax = fig.add_subplot(121)
 ax.set_title('actual')
-plt.imshow(imgseries[5851,:,:,0])
+plt.imshow(y_test)
 ax = fig.add_subplot(122)
 ax.set_title('pred')
-plt.imshow(imgseries[new[0,:,:,0]])
+plt.imshow(y_pred)
         
         
         
