@@ -357,11 +357,13 @@ model.fit(X_train, y_train, epochs = 100, batch_size = 32)
 
 X_train = []
 y_train = []
-length = 3000
-for i in range(96, length):
-    X_train.append(imgseries[i-96:i,:,:,:])
-    y_train.append(imgseries[i-95:i+1,:,:,:])
-X_train, y_train = np.array(X_train), np.array(y_train)
+length = imgseries.shape[0]
+#length = 4000
+for i in range(48, length):
+    X_train.append(imgseries[i-48:i,:,:,:])
+    y_train.append(imgseries[i-47:i+1,:,:,:])
+X_train = np.array(X_train)
+y_train = np.array(y_train)
 
 
 
@@ -370,32 +372,34 @@ from keras.models import Sequential
 from keras.layers.convolutional import Conv3D
 from keras.layers.convolutional_recurrent import ConvLSTM2D
 from keras.layers.normalization import BatchNormalization
+from keras.utils import multi_gpu_model
 
 seq = Sequential()
-seq.add(ConvLSTM2D(filters=64, kernel_size=(3, 3),
+seq.add(ConvLSTM2D(filters=32, kernel_size=(3, 3),
                    input_shape=(None, 46, 36, 1),
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
 
-seq.add(ConvLSTM2D(filters=64, kernel_size=(3, 3),
+seq.add(ConvLSTM2D(filters=32, kernel_size=(3, 3),
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
 
-seq.add(ConvLSTM2D(filters=64, kernel_size=(3, 3),
+seq.add(ConvLSTM2D(filters=32, kernel_size=(3, 3),
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
 
-seq.add(ConvLSTM2D(filters=64, kernel_size=(3, 3),
+seq.add(ConvLSTM2D(filters=32, kernel_size=(3, 3),
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
 
 seq.add(Conv3D(filters=1, kernel_size=(3, 3, 3),
                activation='sigmoid',
                padding='same', data_format='channels_last'))
+#seq = multi_gpu_model(seq)
 seq.compile(loss='mse', optimizer='adam')
 
-seq.fit(X_train, y_train, batch_size=10,
-        epochs=300, validation_split=0.05)
+seq.fit(X_train, y_train, batch_size=4,
+        epochs=50, validation_split=0.05)
 
 
 which = len(X_train)-1
