@@ -178,8 +178,8 @@ uniquelatitude = dataset['latitude'].unique().tolist()
 uniquelatitude.sort()
 numlatitude = len(uniquelatitude)
 difflatitude = uniquelatitude[1] - uniquelatitude[0]
-minlatitude = uniquelatitude[0]
 
+minlatitude = uniquelatitude[0]
 uniquelongitude = dataset['longitude'].unique().tolist()
 uniquelongitude.sort()
 numlongitude = len(uniquelongitude)

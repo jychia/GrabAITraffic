@@ -417,8 +417,7 @@ new = new_pos[::, -1, ::, ::, ::]
 
 
 
-col_names =  ['latitude', 'longitude', 'demand_prediction']
-newDF = pd.DataFrame()
+newDF = pd.DataFrame(columns = ['latitude', 'longitude', 'demand_prediction'])
 uniquelatitude = dataset['latitude'].unique().tolist()
 uniquelatitude.sort()
 numlatitude = len(uniquelatitude)
@@ -431,17 +430,23 @@ numlongitude = len(uniquelongitude)
 difflongitude = uniquelongitude[1] - uniquelongitude[0]
 minlongitude = uniquelongitude[0]
 
-Xcoord = int((dataset['longitude'].values - minlongitude) / difflongitude)
-Ycoord = int((dataset['latitude'].values - minlatitude) / difflatitude)
 
-for i in range(new.shape[2]):
+for i in range(new.shape[1]):
     latitude = minlatitude + difflatitude * i
-    for j in range(new.shape[3]):
+    for j in range(new.shape[2]):
         longitude = minlongitude + difflongitude * j
-        pred = {'latitude':latitude, 'longitude': longitude, 'demand_prediction': new[i][j]}
+        pred = pd.DataFrame({'latitude':[latitude], 'longitude': [longitude], 'demand_prediction': [new[0][i][j][0]]})
+        newDF = newDF.append(pred,ignore_index=True)
         
         
 
+fig = plt.figure()
+ax = fig.add_subplot(121)
+ax.set_title('actual')
+plt.imshow(imgseries[5851,:,:,0])
+ax = fig.add_subplot(122)
+ax.set_title('pred')
+plt.imshow(imgseries[new[0,:,:,0]])
         
         
         
