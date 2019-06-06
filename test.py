@@ -357,7 +357,7 @@ model.fit(X_train, y_train, epochs = 100, batch_size = 32)
 
 X_train = []
 y_train = []
-length = imgseries.shape[0]
+length = imgseries.shape[0]-5
 #length = 4000
 for i in range(48, length):
     X_train.append(imgseries[i-48:i,:,:,:])
@@ -402,11 +402,11 @@ seq.compile(loss='mse', optimizer='adam')
 seq.fit(X_train, y_train, batch_size=4,
         epochs=50, validation_split=0.05)
 
-seq.save('conv_lstm_time48_filter32_batch4.h5') 
+seq.save('conv_lstm_time48_filter32_batch4_full.h5') 
 
 # returns a compiled model
 # identical to the previous one
-seq = load_model('conv_lstm_time48_filter32_batch4.h5')
+seq = load_model('conv_lstm_time48_filter32_batch4_full.h5')
 
 
 which = len(X_train)-1
