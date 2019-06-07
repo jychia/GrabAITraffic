@@ -127,7 +127,7 @@ for d in range(testing_dataset["day"].values.min(),testing_dataset["day"].values
         testing_img.append(img)
 testing_img = np.array(testing_img)
 
-del d, t, i, img, day, daytime, X, Y
+del d, t, i, img, day, daytime, X, Y, colNum, rowNum
 
 print("Finish plotting data into images, start preparing training data")
 
@@ -209,43 +209,54 @@ y_pred = np.array(y_pred)
 print("Finish predicting, start post-processing prediction data")
 
 
-newDF = pd.DataFrame(columns = ['latitude', 'longitude', 'prediction', 'demand', 'TPlus'])
+final_pred = pd.DataFrame(columns = ['latitude', 'longitude', 'geohash6', 'prediction', 'demand', 'TPlus'])
 uniquelatitude = dataset['latitude'].unique().tolist()
 uniquelatitude.sort()
-numlatitude = len(uniquelatitude)
 difflatitude = uniquelatitude[1] - uniquelatitude[0]
 minlatitude = uniquelatitude[0]
 
 uniquelongitude = dataset['longitude'].unique().tolist()
 uniquelongitude.sort()
-numlongitude = len(uniquelongitude)
 difflongitude = uniquelongitude[1] - uniquelongitude[0]
 minlongitude = uniquelongitude[0]
 
 for k in range(y_pred.shape[0]):
-    TPlus = k + 1
     for i in range(y_pred.shape[1]):
         latitude = minlatitude + difflatitude * i
         for j in range(y_pred.shape[2]):
             longitude = minlongitude + difflongitude * j
-            pred = pd.DataFrame({'latitude':[latitude], 'longitude': [longitude], 'prediction': [y_pred[k][i][j]], 'demand':[y_test[k][i][j]], 'TPlus':[TPlus]})
-            newDF = newDF.append(pred,ignore_index=True)
+            pred = pd.DataFrame({'latitude':[latitude], \
+                                 'longitude':[longitude], \
+                                 'geohash6':[geohash.encode(latitude,longitude,6)], \
+                                 'prediction':[y_pred[k][i][j]], \
+                                 'demand':[y_test[k][i][j]], \
+                                 'TPlus':[k+1]})
+            final_pred = final_pred.append(pred,ignore_index=True)
         
-compare = newDF[(newDF['demand'] != 0)]
-
-fig = plt.figure()
-ax = fig.add_subplot(121)
-ax.set_title('actual')
-plt.imshow(y_test)
-ax = fig.add_subplot(122)
-ax.set_title('pred')
-plt.imshow(y_pred)
-        
-r2 = r2_score(newDF['demand'], newDF['prediction'])  
-r2
-        
+del uniquelatitude, difflatitude, minlatitude
+del uniquelongitude, difflongitude, minlongitude
+del i, j, k, pred
 
 
+print("Finish post-processing prediction data, start evaluating")
+
+r2 = r2_score(final_pred['demand'], final_pred['prediction'])  
+print("R2 score for total = ", r2)
+        
+r2 = r2_score(y_test[0].flatten(), y_pred[0].flatten())  
+print("R2 score for T+1 = ", r2)
+
+r2 = r2_score(y_test[1].flatten(), y_pred[1].flatten())  
+print("R2 score for T+2 = ", r2)
+
+r2 = r2_score(y_test[2].flatten(), y_pred[2].flatten())  
+print("R2 score for T+3 = ", r2)
+
+r2 = r2_score(y_test[3].flatten(), y_pred[3].flatten())  
+print("R2 score for T+4 = ", r2)
+
+r2 = r2_score(y_test[4].flatten(), y_pred[4].flatten())  
+print("R2 score for T+5 = ", r2)
 
 
 fig = plt.figure()
