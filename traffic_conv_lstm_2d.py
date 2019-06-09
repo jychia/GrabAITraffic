@@ -135,7 +135,7 @@ print("Finish plotting data into images, start preparing training data")
 
 X_train = []
 y_train = []
-timestep = 48
+timestep = 96
 for i in range(timestep, training_img.shape[0]):
     X_train.append(training_img[i-timestep:i,:,:,:])
     y_train.append(training_img[i-(timestep-1):i+1,:,:,:])
@@ -181,10 +181,10 @@ seq.compile(loss='mse', optimizer='adam')
 
 print("Finish preparing Conv-LSTM-2D model, start training!")
 
-seq.fit(X_train, y_train, batch_size=4,
+seq.fit(X_train, y_train, batch_size=2,
         epochs=50, validation_split=0.05)
 
-model_name = 'conv_lstm_time48_filter32_lyr4_batch4_trainday55.h5'
+model_name = 'conv_lstm_time96_filter32_lyr4_batch2_trainday55.h5'
 
 seq.save(model_name) 
 
