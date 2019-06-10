@@ -1,6 +1,8 @@
 import numpy as np
 import pandas as pd
 import preprocessing
+import zipfile
+from shutil import copyfile, rmtree
 from keras.models import Sequential
 from keras.layers.convolutional import Conv3D
 from keras.layers.convolutional_recurrent import ConvLSTM2D
@@ -9,12 +11,22 @@ from keras.models import load_model
 
 
 
-file_name = 'training.csv'
+file_name = 'datasets/training.csv'
 
+# Unzip training dataset and move it into datasets folder
+zip_ref = zipfile.ZipFile("datasets/traffic-management.zip", 'r')
+zip_ref.extractall("datasets/")
+zip_ref.close()
+copyfile("datasets/Traffic Management/training.csv",file_name)
+rmtree("datasets/Traffic Management")
+
+# Preprocess raw training data
 edited_file_name = preprocessing.preprocessing_rawdata(file_name)
 
+# Read the preprocessed data
 dataset = pd.read_csv(edited_file_name, quoting = 3)
 
+# Plot the data into images 
 training_img = preprocessing.plot_data_to_img(dataset)
 
 print("Start preparing training data")
