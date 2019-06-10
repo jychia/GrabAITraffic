@@ -12,11 +12,11 @@ In the provided training data on booking demand, the raw data are being preproce
 | Columns        | Description           |
 | -------------- | --------------------- |
 | geohash6       | Original provided dataset to represent location |
-| day            | Original provided dataset to represent which consecutive days in dataset      |
-| timestamp      | Original provided dataset to represent time of day      |
+| day            | Original provided dataset to represent which consecutive days in dataset |
+| timestamp      | Original provided dataset to represent time of day |
 | demand         | Original provided dataset to represent booking demand of that location in that particular timestep and day |
-| latitude       | Latitude value decoded from geohash      |
-| longitude      | Longitude value decoded from geohash      |
+| latitude       | Latitude value decoded from geohash |
+| longitude      | Longitude value decoded from geohash |
 | normalizedTime | Normalized timesteps in the day, where each value represents 15-min slice. (0 = 00:00, 1 = 00:15, 2 = 00:30, etc...) |
 | normalizedDayTime | Normalized overall timesteps over 61 days, where each value represents 15-min slice. (0 = day 1 00:00, 1 = day 1 00:15, 96 = day 2 00:00, etc...) |
 | Xcoord | Normalized X coordinates = ( longitudes - min value in all longitudes ) / each longitude step |
@@ -44,25 +44,36 @@ The process is then repeated until T+5 is predicted.
 
 ## Folder Structure
 
-  .
-  ├── datasets                  # Training dataset
-  │   └── traffic_management.zip
-  |
-  ├── media                     # Images used in README.md
-  │   ├── day_1_12am.PNG
-  │   └── day_5_3pm.PNG
-  |
-  ├── models                    # Saved models used for testing, 
-  │   ├── conv_lstm_time48_filter32_batch4_full.h5
-  │   ├── conv_lstm_time48_filter32_lyr4_batch4_trainday55.h5
-  │   ├── conv_lstm_time48_filter32_lyr4_batch4.h5
-  │   └── final_model.h5
-  |
-  ├── evaluation_script.py      # Script to 
-  ├── geohash.py                # Geohash script used to decode/encode geohash (https://github.com/hkwi/python-geohash)
-  ├── preprocessing.py
-  ├── test.py
-  ├── traffic_conv_lstm_2d.py
-  ├── training_script.py
-  └── README.md
+```
+.
+├── datasets                  # Training dataset
+│   └── traffic_management.zip
+|
+├── media                     # Images used in README.md
+│   ├── day_1_12am.PNG
+│   └── day_5_3pm.PNG
+|
+├── models                    # Saved models used for testing, tuning and final evaluation
+│   ├── conv_lstm_time48_filter32_batch4_full.h5
+│   ├── conv_lstm_time48_filter32_lyr4_batch4_trainday55.h5
+│   ├── conv_lstm_time48_filter32_lyr4_batch4.h5
+│   └── final_model.h5
+|
+├── evaluation_script.py      # Script to produce evaluation predictions on hold-out test set
+├── geohash.py                # Geohash script used to decode/encode geohash (https://github.com/hkwi/python-geohash)
+├── preprocessing.py          # Script consists of data preprocessing functions
+├── test.py                   # Script used for initial analysis and data exploration
+├── traffic_conv_lstm_2d.py   # Script used for model tuning and testing
+├── training_script.py        # Script used to train final model
+└── README.md
+```
+All the 
 
+## Libraries
+* [Numpy](http://www.numpy.org/) - NumPy is the fundamental package for scientific computing with Python 
+* [pandas](https://pandas.pydata.org/pandas-docs/stable/) - pandas is an open source, BSD-licensed library providing high-performance, easy-to-use data structures and data analysis tools for the Python programming language.
+* [keras](https://keras.io/) - Keras is a high-level neural networks API, written in Python and capable of running on top of TensorFlow, CNTK, or Theano
+* [scikit-learn](https://scikit-learn.org/stable/) - scikit-learn is a machine learning library in python
+
+## Acknowledgements
+A huge thank you to Grab for organizing this machine learning challenge.
