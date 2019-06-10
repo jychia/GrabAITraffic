@@ -74,8 +74,8 @@ def plot_data_to_img(dataset):
     
     print("Plotting data into images")
     
-    for d in range(dataset["day"].values.min(),dataset["day"].values.max()+1):
-        for t in range(int(dataset["normalizedTime"].values.max()+1)):
+    for d in range(dataset["day"].values.min(), dataset["day"].values.max()+1):
+        for t in range(int(dataset["normalizedTime"].values.min()), int(dataset["normalizedTime"].values.max()+1)):
             img = np.zeros(shape=(colNum,rowNum,1))
             day = dataset[(dataset["day"].values == d)]
             daytime = day[(day["normalizedTime"].values == t)]

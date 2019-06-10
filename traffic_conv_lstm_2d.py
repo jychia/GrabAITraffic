@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 from sklearn.metrics import r2_score
-
+from sklearn.metrics import mean_squared_error
 
 # Preprocess phase 1 - Process raw data & calculate extra columns
 
@@ -184,13 +184,13 @@ print("Finish preparing Conv-LSTM-2D model, start training!")
 seq.fit(X_train, y_train, batch_size=2,
         epochs=50, validation_split=0.05)
 
-model_name = 'conv_lstm_time96_filter32_lyr4_batch2_trainday55.h5'
+model_name = 'models/conv_lstm_time48_filter32_lyr4_batch4_trainday55.h5'
 
 seq.save(model_name) 
 
 print("Finally finish training! Now start predicting")
 
-#seq = load_model(model_name)
+seq = load_model(model_name)
 
 y_pred = []
 y_test = testing_img[testing_img.shape[0]-5:testing_img.shape[0],:,:,0]
@@ -259,6 +259,26 @@ r2 = r2_score(y_test[4].flatten(), y_pred[4].flatten())
 print("R2 score for T+5 = ", r2)
 
 
+
+mse = mean_squared_error(final_pred['demand'], final_pred['prediction'])  
+print("mse for total = ", mse)
+        
+mse = mean_squared_error(y_test[0].flatten(), y_pred[0].flatten())  
+print("mse for T+1 = ", mse)
+
+mse = mean_squared_error(y_test[1].flatten(), y_pred[1].flatten())  
+print("mse for T+2 = ", mse)
+
+mse = mean_squared_error(y_test[2].flatten(), y_pred[2].flatten())  
+print("mse for T+3 = ", mse)
+
+mse = mean_squared_error(y_test[3].flatten(), y_pred[3].flatten())  
+print("mse for T+4 = ", mse)
+
+mse = mean_squared_error(y_test[4].flatten(), y_pred[4].flatten())  
+print("mse for T+5 = ", mse)
+
+
 fig = plt.figure()
 ax = fig.add_subplot(1,2,1)
 ax.set_title('actual 1')
@@ -298,3 +318,4 @@ plt.imshow(y_test[4])
 ax = fig.add_subplot(1,2,2)
 ax.set_title('pred 5')
 plt.imshow(y_pred[4])
+
