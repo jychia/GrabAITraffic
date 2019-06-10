@@ -57,9 +57,6 @@ def preprocessing_rawdata(file_name):
     dataset["Xcoord"] = Xcoord
     dataset["Ycoord"] = Ycoord
     
-    dayofweek = dataset['day'].values % 7
-    dataset["dayOfWeek"] = dayofweek
-    
     edited_file_name = os.path.splitext(file_name)[0] + "_edited.csv"
     
     print("Finish preprocessing, saving data into ", edited_file_name)
