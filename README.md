@@ -44,41 +44,25 @@ The process is then repeated until T+5 is predicted.
 
 ## Folder Structure
 
-.
-├── Datasets
-│   ├── data.sh
-│   ├── dl_large_files.sh
-│   ├── fastai.sh
-│   ├── img.sh
-│   ├── lgb.sh
-│   └── setup_linux.sh
-├── Media                   # Images used in README.md
-│   ├── day_1_12am.PNG
-│   ├── day_5_3pm.PNG
-│   └── README_logo.PNG
-├── Models                  # Saved models used for testing, 
-│   ├── common
-│   │   ├── __init__.py
-│   │   ├── split_data.py
-│   │   └── topic.py
-│   ├── heuristic
-│   │   ├── fashion_library.json
-│   │   ├── __init__.py
-│   │   └── mobile
-│   │       ├── enricher.py
-│   │       ├── extractor.py
-│   │       └── __init__.py
-│   ├── image
-│   │   ├── fastai
-│   │   │   ├── __init__.py
-│   │   │   ├── main.py
-│   │   │   └── ml_model.py
-│   │   ├── __init__.py
-│   │   └── pytorch
-│   │       ├── dataset.py
-│   │       ├── __init__.py
-│   │       ├── test.py
-│   │       ├── train.py
-│   │       └── validation.py
-└── README.md
+  .
+  ├── datasets                  # Training dataset
+  │   └── traffic_management.zip
+  |
+  ├── media                     # Images used in README.md
+  │   ├── day_1_12am.PNG
+  │   └── day_5_3pm.PNG
+  |
+  ├── models                    # Saved models used for testing, 
+  │   ├── conv_lstm_time48_filter32_batch4_full.h5
+  │   ├── conv_lstm_time48_filter32_lyr4_batch4_trainday55.h5
+  │   ├── conv_lstm_time48_filter32_lyr4_batch4.h5
+  │   └── final_model.h5
+  |
+  ├── evaluation_script.py      # Script to 
+  ├── geohash.py                # Geohash script used to decode/encode geohash (https://github.com/hkwi/python-geohash)
+  ├── preprocessing.py
+  ├── test.py
+  ├── traffic_conv_lstm_2d.py
+  ├── training_script.py
+  └── README.md
 
