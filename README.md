@@ -28,8 +28,8 @@ Then, the traffic demands for each geohash on that specific day and timesteps ar
 
 Sample visualization on booking demand plots:
 
-![alt text](Media/day_1_12am.PNG)
-![alt text](Media/day_5_3pm.PNG)
+![alt text](media/day_1_12am.PNG)
+![alt text](media/day_5_3pm.PNG)
 
 After plotting the data into the booking demand plots, there will be a total of 96 plots for each day (96 distinct timesteps), 
 and a total of 5856 plots over 61 days.
