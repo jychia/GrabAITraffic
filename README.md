@@ -72,7 +72,8 @@ The predictions.csv will have the following format:
 |
 ├── media                     # Images used in README.md
 │   ├── day_1_12am.PNG
-│   └── day_5_3pm.PNG
+│   ├── day_5_3pm.PNG
+│   └── shell_evaluation.png
 |
 ├── models                    # Saved models used for testing, tuning and final evaluation
 │   ├── conv_lstm_time48_filter32_batch4_full.h5
