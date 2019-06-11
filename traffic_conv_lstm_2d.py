@@ -153,6 +153,7 @@ from keras.models import Sequential
 from keras.layers.convolutional import Conv3D
 from keras.layers.convolutional_recurrent import ConvLSTM2D
 from keras.layers.normalization import BatchNormalization
+from keras.layers import Dropout
 from keras.models import load_model
 
 seq = Sequential()
@@ -172,6 +173,7 @@ seq.add(BatchNormalization())
 seq.add(ConvLSTM2D(filters=32, kernel_size=(3, 3),
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
+seq.add(Dropout(0.2))
 
 seq.add(Conv3D(filters=1, kernel_size=(3, 3, 3),
                activation='sigmoid',
@@ -184,13 +186,13 @@ print("Finish preparing Conv-LSTM-2D model, start training!")
 seq.fit(X_train, y_train, batch_size=2,
         epochs=50, validation_split=0.05)
 
-model_name = 'models/conv_lstm_time48_filter32_lyr4_batch4_trainday55.h5'
+model_name = 'models/conv_lstm_time96_filter32_lyr4_dropout_batch2_trainday55.h5'
 
 seq.save(model_name) 
 
 print("Finally finish training! Now start predicting")
 
-seq = load_model(model_name)
+#seq = load_model(model_name)
 
 y_pred = []
 y_test = testing_img[testing_img.shape[0]-5:testing_img.shape[0],:,:,0]
