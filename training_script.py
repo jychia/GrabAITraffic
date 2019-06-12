@@ -76,10 +76,9 @@ seq.compile(loss='mse', optimizer='adam')
 
 print("Finish preparing model, start training!")
 
-seq.fit(X_train, y_train, batch_size=2,
-        epochs=50, validation_split=0.05)
+seq.fit(X_train, y_train, batch_size=2, epochs=50)
 
-model_name = 'final_model.h5'
+model_name = 'models/final_model.h5'
 
 seq.save(model_name) 
 
