@@ -6,6 +6,14 @@ import numpy as np
 import pandas as pd
 import os
 
+# Preprocessing raw input data
+# Calculate additional columns:
+# - latitude: decoded from geohash6
+# - longitude: decoded from geohash6
+# - normalizedTime: normalized timesteps in a day, eg: 0 = 00:00, 1 = 00:15, 2 = 00:30, etc...
+# - normalizedDayTime: normalized overall timesteps over 61 days, eg: 0 = day 1 00:00, 96 = day 2 00:00, etc...
+# - Xcoord: normalized longitude into 0-35
+# - Ycoord: normalized latitude into 0-45
 def preprocessing_rawdata(file_name):
 
     print("Start reading raw data")
@@ -69,6 +77,7 @@ def preprocessing_rawdata(file_name):
     return edited_file_name
 
 
+# Transform processed data into a time series of 2D data plots
 def plot_data_to_img(dataset):
     
     img_series = []
