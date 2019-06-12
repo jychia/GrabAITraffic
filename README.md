@@ -34,17 +34,27 @@ Sample visualization on booking demand plots:
 After plotting the data into the booking demand plots, there will be a total of 96 plots for each day (96 distinct timesteps), 
 and a total of 5856 plots over 61 days.
 
-These plots are then being fed into a 4 layered ConvLSTM2D neural network with 32 neurons each, where it is used to train the model for predictions of next plot. The model summary is as below:
+These plots are then packed into 96 consecutive plots per training sample, which means each training sample is 96 x 46 x 36 x 1 (96 consecutive demand plots image in single channel). They are then fed into a neural network where it is used to train the model for predictions of next plot. 
+
+![Flowchart](media/Flowchart.png)
+
+The model summary is as below:
 
 ```
 
 ```
+
+The model is a 4 layered Convolutional LSTM 2D with 32 neurons each with Batch Normalization after every layer. A dropout layer is added right before the output layer (as advised from [Understanding the Disharmony between Dropout and Batch Normalization by
+Variance Shift](https://arxiv.org/pdf/1801.05134.pdf) ). The output layer is a Convolutional 3D layer to produce prediction in the same format as input 96 x 46 x 36 x 1.
 
 To predict the demands for T+1 up to T+5, the model will first be used to predict a new booking demand plot for T+1, where it's input data consists of 96 previous demand plots (T-95 to T, equivalent to 1 day's data).
 With that data, the model then predicts the T+1 demand plot.
 From there, the T+1 plot is added into the input data and the T-95 plot is removed from the input data.
 The input data is then used to predict T+2 booking demand plot.
 The process is then repeated until T+5 is predicted.
+
+## Getting Started
+Simply download the project and unzip it.
 
 ## Run the prediction with hold-out test set
 To produce the booking predictions for T+1 to T+5, just run the evaluation_script.py file. It will prompt you to enter the file path of test dataset csv file:
@@ -62,6 +72,9 @@ The predictions.csv will have the following format:
 | geohash6   | Encoded geohash (level 6) of the location |
 | prediction | Booking demand prediction of the location |
 | TPlus      | T+ values (range from 1 to 5) |
+
+## Train the neural network
+To train the neural network and produce the prediction model, simply run the training_script.py file and it will read, process the data and train the neural network, then ultimately save the model into "models/final_model.h5" file.
 
 ## Folder Structure
 
