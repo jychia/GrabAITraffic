@@ -57,18 +57,20 @@ uniquelatitude.sort()
 numlatitude = len(uniquelatitude)
 difflatitude = uniquelatitude[1] - uniquelatitude[0]
 minlatitude = uniquelatitude[0]
-#for i in range(len(uniquelatitude)-1):
-#    diff = uniquelatitude[i+1] - uniquelatitude[i]
-#    print(diff)
+# Check if all unique latitudes have same difference
+for i in range(len(uniquelatitude)-1):
+    diff = uniquelatitude[i+1] - uniquelatitude[i]
+    print(diff)
 
 uniquelongitude = dataset['longitude'].unique().tolist()
 uniquelongitude.sort()
 numlongitude = len(uniquelongitude)
 difflongitude = uniquelongitude[1] - uniquelongitude[0]
 minlongitude = uniquelongitude[0]
-#for i in range(len(uniquelongitude)-1):
-#    diff = uniquelongitude[i+1] - uniquelongitude[i]
-#    print(diff)
+# Check if all unique longitudes have same difference
+for i in range(len(uniquelongitude)-1):
+    diff = uniquelongitude[i+1] - uniquelongitude[i]
+    print(diff)
 
 Xcoord = int((dataset['longitude'].values - minlongitude) / difflongitude)
 Ycoord = int((dataset['latitude'].values - minlatitude) / difflatitude)
