@@ -189,7 +189,7 @@ print("Finish preparing Conv-LSTM-2D model, start training!")
 seq.fit(X_train, y_train, batch_size=2,
         epochs=50, validation_split=0.05)
 
-model_name = 'models/conv_lstm_time96_filter32_lyr4_dropout_batch2_trainday55.h5'
+model_name = 'models/conv_lstm_time96_filter32_lyr4_batch2_trainday55.h5'
 
 seq.save(model_name) 
 
