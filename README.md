@@ -41,11 +41,34 @@ These plots are then packed into 96 consecutive plots per training sample, which
 The model summary is as below:
 
 ```
-
+_________________________________________________________________
+Layer (type)                 Output Shape              Param #   
+=================================================================
+conv_lst_m2d_1 (ConvLSTM2D)  (None, None, 46, 36, 32)  38144     
+_________________________________________________________________
+batch_normalization_1 (Batch (None, None, 46, 36, 32)  128       
+_________________________________________________________________
+conv_lst_m2d_2 (ConvLSTM2D)  (None, None, 46, 36, 32)  73856     
+_________________________________________________________________
+batch_normalization_2 (Batch (None, None, 46, 36, 32)  128       
+_________________________________________________________________
+conv_lst_m2d_3 (ConvLSTM2D)  (None, None, 46, 36, 32)  73856     
+_________________________________________________________________
+batch_normalization_3 (Batch (None, None, 46, 36, 32)  128       
+_________________________________________________________________
+conv_lst_m2d_4 (ConvLSTM2D)  (None, None, 46, 36, 32)  73856     
+_________________________________________________________________
+batch_normalization_4 (Batch (None, None, 46, 36, 32)  128       
+_________________________________________________________________
+conv3d_1 (Conv3D)            (None, None, 46, 36, 1)   865       
+=================================================================
+Total params: 261,089
+Trainable params: 260,833
+Non-trainable params: 256
+_________________________________________________________________
 ```
 
-The model is a 4 layered Convolutional LSTM 2D with 32 neurons each with Batch Normalization after every layer. A dropout layer is added right before the output layer (as advised from [Understanding the Disharmony between Dropout and Batch Normalization by
-Variance Shift](https://arxiv.org/pdf/1801.05134.pdf) ). The output layer is a Convolutional 3D layer to produce prediction in the same format as input 96 x 46 x 36 x 1.
+The model is a 4 layered Convolutional LSTM 2D with 32 neurons each with Batch Normalization after every layer. The output layer is a Convolutional 3D layer to produce prediction in the same format as input 96 x 46 x 36 x 1.
 
 To predict the demands for T+1 up to T+5, the model will first be used to predict a new booking demand plot for T+1, where it's input data consists of 96 previous demand plots (T-95 to T, equivalent to 1 day's data).
 With that data, the model then predicts the T+1 demand plot.
