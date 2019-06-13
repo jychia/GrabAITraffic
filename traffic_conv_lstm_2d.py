@@ -8,6 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
+import math
 
 # Preprocess phase 1 - Process raw data & calculate extra columns
 
@@ -139,9 +140,9 @@ print("Finish plotting data into images, start preparing training data")
 X_train = []
 y_train = []
 timestep = 96
-for i in range(timestep, training_img.shape[0]):
+for i in range(timestep, training_img.shape[0]-5):
     X_train.append(training_img[i-timestep:i,:,:,:])
-    y_train.append(training_img[i-(timestep-1):i+1,:,:,:])
+    y_train.append(training_img[i-timestep+6:i+6,:,:,:])
 X_train = np.array(X_train)
 y_train = np.array(y_train)
 
@@ -199,7 +200,7 @@ print("Finally finish training! Now start predicting")
 
 y_pred = []
 timestep = 96
-shift = 48
+shift = 0
 y_test = testing_img[testing_img.shape[0]-shift-5:testing_img.shape[0]-shift,:,:,0]
 X_test = testing_img[testing_img.shape[0]-timestep-shift-5:testing_img.shape[0]-shift-5,:,:,:]
 for i in range(5):
@@ -211,6 +212,13 @@ for i in range(5):
 y_pred = np.array(y_pred)
 
 
+X_test2 = testing_img[testing_img.shape[0]-timestep-shift:testing_img.shape[0]-shift-5,:,:,:]
+new_pos2 = seq.predict(X_test2[np.newaxis, ::, ::, ::, ::])
+y_pred2 = new_pos2[0, new_pos2.shape[1]-5:new_pos2.shape[1], ::, ::, 0]
+
+
+y_pred_final = np.concatenate((y_pred[:3],y_pred2[3:]))
+y_pred = y_pred_final
 
 
 print("Finish predicting, start post-processing prediction data")
@@ -268,22 +276,34 @@ print("R2 score for T+5 = ", r2)
 
 
 mse = mean_squared_error(final_pred['demand'], final_pred['prediction'])  
+rmse = math.sqrt(mse)
 print("mse for total = ", mse)
+print("rmse for total = ", rmse)
         
 mse = mean_squared_error(y_test[0].flatten(), y_pred[0].flatten())  
+rmse = math.sqrt(mse)
 print("mse for T+1 = ", mse)
+print("rmse for T+1 = ", rmse)
 
 mse = mean_squared_error(y_test[1].flatten(), y_pred[1].flatten())  
+rmse = math.sqrt(mse)
 print("mse for T+2 = ", mse)
+print("rmse for T+2 = ", rmse)
 
 mse = mean_squared_error(y_test[2].flatten(), y_pred[2].flatten())  
+rmse = math.sqrt(mse)
 print("mse for T+3 = ", mse)
+print("rmse for T+3 = ", rmse)
 
 mse = mean_squared_error(y_test[3].flatten(), y_pred[3].flatten())  
+rmse = math.sqrt(mse)
 print("mse for T+4 = ", mse)
+print("rmse for T+4 = ", rmse)
 
 mse = mean_squared_error(y_test[4].flatten(), y_pred[4].flatten())  
+rmse = math.sqrt(mse)
 print("mse for T+5 = ", mse)
+print("rmse for T+5 = ", rmse)
 
 
 fig = plt.figure()
