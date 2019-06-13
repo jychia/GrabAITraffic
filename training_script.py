@@ -34,8 +34,8 @@ timestep = 96
 for i in range(timestep, training_img.shape[0]):
     X_train.append(training_img[i-timestep:i,:,:,:])
     y_train.append(training_img[i-(timestep-1):i+1,:,:,:])
-X_train = np.array(X_train)
-y_train = np.array(y_train)
+X_train = np.array(X_train, dtype="float32")
+y_train = np.array(y_train, dtype="float32")
 
 del i
 

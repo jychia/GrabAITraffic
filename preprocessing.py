@@ -100,6 +100,7 @@ def plot_data_to_img(dataset):
                 img[int(Y)][int(X)][0] = daytime["demand"].values[i]
             img_series.append(img)
     img_series = np.array(img_series)
+    img_series = np.float32(img_series)
     
     print("Finish plotting data into images")
     
