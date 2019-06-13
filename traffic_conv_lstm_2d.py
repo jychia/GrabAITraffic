@@ -176,7 +176,7 @@ seq.add(BatchNormalization())
 seq.add(ConvLSTM2D(filters=32, kernel_size=(3, 3),
                    padding='same', return_sequences=True))
 seq.add(BatchNormalization())
-seq.add(Dropout(0.2))
+#seq.add(Dropout(0.2))
 
 seq.add(Conv3D(filters=1, kernel_size=(3, 3, 3),
                activation='sigmoid',
@@ -198,8 +198,10 @@ print("Finally finish training! Now start predicting")
 #seq = load_model(model_name)
 
 y_pred = []
-y_test = testing_img[testing_img.shape[0]-5:testing_img.shape[0],:,:,0]
-X_test = testing_img[testing_img.shape[0]-timestep-5:testing_img.shape[0]-5,:,:,:]
+timestep = 96
+shift = 48
+y_test = testing_img[testing_img.shape[0]-shift-5:testing_img.shape[0]-shift,:,:,0]
+X_test = testing_img[testing_img.shape[0]-timestep-shift-5:testing_img.shape[0]-shift-5,:,:,:]
 for i in range(5):
     new_pos = seq.predict(X_test[np.newaxis, ::, ::, ::, ::])
     y_pred.append(new_pos[0, -1, ::, ::, 0])

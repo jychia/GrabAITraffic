@@ -5,6 +5,8 @@ import geohash
 import numpy as np
 import pandas as pd
 import os
+import zipfile
+from shutil import copyfile, rmtree
 
 # Preprocessing raw input data
 # Calculate additional columns:
@@ -99,4 +101,16 @@ def plot_data_to_img(dataset):
             img_series.append(img)
     img_series = np.array(img_series)
     
+    print("Finish plotting data into images")
+    
     return img_series
+
+# Unzip training data
+def unzip_data(file_name):
+    # Unzip training dataset and move it into datasets folder
+    zip_ref = zipfile.ZipFile("datasets/traffic-management.zip", 'r')
+    zip_ref.extractall("datasets/")
+    zip_ref.close()
+    copyfile("datasets/Traffic Management/training.csv", file_name)
+    rmtree("datasets/Traffic Management")
+    print("Finish unzipping and copying training data into ", file_name)
