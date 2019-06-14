@@ -70,18 +70,11 @@ _________________________________________________________________
 
 The model is a 4 layered Convolutional LSTM 2D with 32 neurons each with Batch Normalization after every layer. The output layer is a Convolutional 3D layer to produce prediction in the same format as input 96 x 46 x 36 x 1. The selection of this model is inspired by video frame prediction techniques, where a time series of 2d images are used to predict the next frame of video. As the processed data does bear resemblance to a video (time-consecutive 2d plots in single channel), the model has to take into account the 2d spatial relationship between different/adjacent geohashes as well as the historical demand of the region. Hence, a ConvLSTM2D-based model is selected.
 
-To predict the demands for T+1 up to T+5, 2 different prediction methods are used:
-
-First prediction method is to use the model to predict a new booking demand plot for T+1, where it's input data consists of 96 previous demand plots (T-95 to T, equivalent to 1 day's data).
+The prediction method is to use the model to predict a new booking demand plot for T+1, where it's input data consists of 96 previous demand plots (T-95 to T, equivalent to 1 day's data).
 With that data, the model then predicts the T+1 demand plot.
 From there, the T+1 plot is added into the input data and the T-95 plot is removed from the input data.
 The input data is then used to predict T+2 booking demand plot.
 The process is then repeated until T+5 is predicted.
-This method produces a highly accurate T+1 predictions, but accuracy of predictions drops rapidly until T+5. This is because predictions are being fed back to the model to produce further predictions, and this amplifies error.
-
-Second prediction method is to feed demand plot from T-91 to T,and use the model to predict T+1 to T+5 together at once. This produces predictions with lower accuracy due to lesser data being fed into model. However, the accuracy of predictions does not vary because of the consistent input data fed into the model.
-
-The final predictions combines both of the prediction methods above, where the prediction for T+1 till T+3 is extracted from first prediction method (accurate for closer prediction) and T+4 till T+5 is extracted from second prediction method (less varying prediction accuracy).
 
 ## Getting Started
 Simply download the project and unzip it.
