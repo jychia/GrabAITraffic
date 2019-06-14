@@ -116,6 +116,7 @@ for d in range(training_dataset["day"].values.min(),training_dataset["day"].valu
             img[int(Y)][int(X)][0] = daytime["demand"].values[i]
         training_img.append(img)
 training_img = np.array(training_img)
+training_img = training_img.astype(np.float16)
 
 # Plotting testing data into images
 for d in range(testing_dataset["day"].values.min(),testing_dataset["day"].values.max()+1):
@@ -130,13 +131,14 @@ for d in range(testing_dataset["day"].values.min(),testing_dataset["day"].values
             img[int(Y)][int(X)][0] = daytime["demand"].values[i]
         testing_img.append(img)
 testing_img = np.array(testing_img)
+testing_img = testing_img.astype(np.float16)
 
 del d, t, i, img, day, daytime, X, Y, colNum, rowNum
 
 print("Finish plotting data into images, start preparing training data")
 
 # Preprocess phase 4 - Preparing training data for Conv-LSTM-2D model
-
+"""
 X_train = []
 y_train = []
 timestep = 96
@@ -153,9 +155,9 @@ timestep = 96
 for i in range(timestep, training_img.shape[0]-5):
     X_train.append(training_img[i-timestep:i,:,:,:])
     y_train.append(training_img[i-timestep+6:i+6,:,:,:])
-X_train = np.array(X_train)
-y_train = np.array(y_train)
-"""
+X_train = np.array(X_train,dtype=np.float16)
+y_train = np.array(y_train,dtype=np.float16)
+
 
 
 del i
@@ -199,10 +201,10 @@ seq.compile(loss='mse', optimizer='adam')
 
 print("Finish preparing Conv-LSTM-2D model, start training!")
 
-seq.fit(X_train, y_train, batch_size=2,
+seq.fit(X_train, y_train, batch_size=4,
         epochs=50, validation_split=0.05)
 
-model_name = 'models/conv_lstm_time96_filter32_lyr4_batch2_trainday55.h5'
+model_name = 'models/conv_lstm_time48_filter32_lyr4_batch2_pred5_trainday55.h5'
 
 seq.save(model_name) 
 
@@ -211,7 +213,7 @@ print("Finally finish training! Now start predicting")
 #seq = load_model(model_name)
 
 y_pred = []
-timestep = 96
+timestep = 48
 shift = 0
 y_test = testing_img[testing_img.shape[0]-shift-5:testing_img.shape[0]-shift,:,:,0]
 X_test = testing_img[testing_img.shape[0]-timestep-shift-5:testing_img.shape[0]-shift-5,:,:,:]
