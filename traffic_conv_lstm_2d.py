@@ -160,7 +160,7 @@ y_train = np.array(y_train,dtype=np.float16)
 
 
 
-del i
+del i, training_img
 
 print("Finish preparing training data, start preparing Conv-LSTM-2D model")
 
@@ -201,7 +201,7 @@ seq.compile(loss='mse', optimizer='adam')
 
 print("Finish preparing Conv-LSTM-2D model, start training!")
 
-seq.fit(X_train, y_train, batch_size=4,
+seq.fit(X_train, y_train, batch_size=2,
         epochs=50, validation_split=0.05)
 
 model_name = 'models/conv_lstm_time48_filter32_lyr4_batch2_pred5_trainday55.h5'
