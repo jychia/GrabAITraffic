@@ -3,6 +3,9 @@
 
 import geohash
 import numpy as np
+import os
+import zipfile
+from shutil import copyfile, rmtree
 #import matplotlib.pyplot as plt
 #from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
@@ -12,9 +15,19 @@ import math
 
 # Preprocess phase 1 - Process raw data & calculate extra columns
 
+
+# Unzip training dataset and move it into datasets folder
+zip_ref = zipfile.ZipFile("datasets/traffic-management.zip", 'r')
+zip_ref.extractall("datasets/")
+zip_ref.close()
+copyfile("datasets/Traffic Management/training.csv", training.csv)
+rmtree("datasets/Traffic Management")
+print("Finish unzipping and copying training data into ", training.csv)
+
+
 print("Start reading raw data")
 
-dataset = pd.read_csv('datasets/training.csv', quoting = 3)
+dataset = pd.read_csv('training.csv', quoting = 3)
 
 print("Finish reading raw data, start preprocessing data phase 1")
 
