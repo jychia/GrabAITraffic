@@ -20,9 +20,9 @@ import math
 zip_ref = zipfile.ZipFile("datasets/traffic-management.zip", 'r')
 zip_ref.extractall("datasets/")
 zip_ref.close()
-copyfile("datasets/Traffic Management/training.csv", training.csv)
+copyfile("datasets/Traffic Management/training.csv", "training.csv")
 rmtree("datasets/Traffic Management")
-print("Finish unzipping and copying training data into ", training.csv)
+print("Finish unzipping and copying training data into ", "training.csv")
 
 
 print("Start reading raw data")
