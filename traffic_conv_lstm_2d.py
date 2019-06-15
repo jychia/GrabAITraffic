@@ -14,7 +14,7 @@ import math
 
 print("Start reading raw data")
 
-dataset = pd.read_csv('training.csv', quoting = 3)
+dataset = pd.read_csv('datasets/training.csv', quoting = 3)
 
 print("Finish reading raw data, start preprocessing data phase 1")
 
