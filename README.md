@@ -117,6 +117,7 @@ To train the neural network and produce the prediction model, simply run the tra
 │   ├── conv_lstm_time48_filter32_lyr4_batch4.h5
 │   └── final_model.h5        # Final neural network model
 |
+├── EDA.ipynb                 # Jupyter notebook for exploratory data analysis
 ├── evaluation_script.py      # Script to produce evaluation predictions on hold-out test set
 ├── geohash.py                # Geohash script used to decode/encode geohash (https://github.com/hkwi/python-geohash)
 ├── preprocessing.py          # Script consists of data preprocessing functions
