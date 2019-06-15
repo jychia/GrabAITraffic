@@ -3,8 +3,8 @@
 
 import geohash
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+#import matplotlib.pyplot as plt
+#from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
@@ -319,7 +319,7 @@ rmse = math.sqrt(mse)
 print("mse for T+5 = ", mse)
 print("rmse for T+5 = ", rmse)
 
-
+"""
 fig = plt.figure()
 ax = fig.add_subplot(1,2,1)
 ax.set_title('actual 1')
@@ -359,4 +359,4 @@ plt.imshow(y_test[4])
 ax = fig.add_subplot(1,2,2)
 ax.set_title('pred 5')
 plt.imshow(y_pred[4])
-
+"""
