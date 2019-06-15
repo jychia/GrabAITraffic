@@ -99,15 +99,6 @@ The predictions.csv will have the following format:
 ## Train the neural network
 To train the neural network and produce the prediction model, simply run the training_script.py file and it will read, process the data and train the neural network, then ultimately save the model into "models/final_model.h5" file.
 
-## Evaluation of the model
-To evaluate how well the model performs, the data has been split as follows:
-Training dataset: First 55 days of data (day 1 - day 55)
-Testing dataset: The remaining 6 days of data (day 56 - day 61)
-Prediction: Different 5 timesteps within the testing dataset
-
-
-
-
 ## Folder Structure
 
 ```
