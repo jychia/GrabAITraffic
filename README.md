@@ -128,7 +128,7 @@ To train the neural network and produce the prediction model, simply run the tra
 ```
 
 ## Results analysis and further potential improvements
-A big weakness for this model is the prediction method, where it only predicts 1 future plot, and the prediction is then being fed back into the model to predict subsequent plot. This method produces a highly accurate T+1 predictions, but accuracy of predictions drops rapidly until T+5. This is because the error gets amplified for every prediction iteration.
+A big weakness for this model is the prediction method, where it only predicts 1 future plot, and the prediction is then being fed back into the model to predict subsequent plot. This method produces an accurate T+1 predictions, but accuracy of predictions drops rapidly until T+5. This is because the error gets amplified for every prediction iteration.
 
 An alternative way to resolve this is to prepare the training data and model to predict 5 future plots together at once. That means, to feed T-96 to T as input data, then the training results would be T-91 to T+5. This method would possibly eliminate this problem. However, due to the long training time for this model and resource limitation, I do not have sufficient time to test this method out before the deadline.
 
