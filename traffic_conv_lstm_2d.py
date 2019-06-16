@@ -226,7 +226,7 @@ print("Finally finish training! Now start predicting")
 #seq = load_model(model_name)
 
 y_pred = []
-timestep = 48
+timestep = 96
 shift = 0
 y_test = testing_img[testing_img.shape[0]-shift-5:testing_img.shape[0]-shift,:,:,0]
 X_test = testing_img[testing_img.shape[0]-timestep-shift-5:testing_img.shape[0]-shift-5,:,:,:]
