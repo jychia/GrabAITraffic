@@ -6,8 +6,8 @@ import numpy as np
 import os
 import zipfile
 from shutil import copyfile, rmtree
-#import matplotlib.pyplot as plt
-#from mpl_toolkits.mplot3d import Axes3D
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 import pandas as pd
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error
@@ -129,7 +129,7 @@ for d in range(training_dataset["day"].values.min(),training_dataset["day"].valu
             img[int(Y)][int(X)][0] = daytime["demand"].values[i]
         training_img.append(img)
 training_img = np.array(training_img)
-training_img = training_img.astype(np.float16)
+training_img = training_img.astype(np.float32)
 
 # Plotting testing data into images
 for d in range(testing_dataset["day"].values.min(),testing_dataset["day"].values.max()+1):
@@ -144,7 +144,7 @@ for d in range(testing_dataset["day"].values.min(),testing_dataset["day"].values
             img[int(Y)][int(X)][0] = daytime["demand"].values[i]
         testing_img.append(img)
 testing_img = np.array(testing_img)
-testing_img = testing_img.astype(np.float16)
+testing_img = testing_img.astype(np.float32)
 
 del d, t, i, img, day, daytime, X, Y, colNum, rowNum
 
@@ -168,8 +168,8 @@ timestep = 96
 for i in range(timestep, training_img.shape[0]-5):
     X_train.append(training_img[i-timestep:i,:,:,:])
     y_train.append(training_img[i-timestep+6:i+6,:,:,:])
-X_train = np.array(X_train,dtype=np.float16)
-y_train = np.array(y_train,dtype=np.float16)
+X_train = np.array(X_train,dtype=np.float32)
+y_train = np.array(y_train,dtype=np.float32)
 
 
 
@@ -217,7 +217,7 @@ print("Finish preparing Conv-LSTM-2D model, start training!")
 seq.fit(X_train, y_train, batch_size=2,
         epochs=50, validation_split=0.05)
 
-model_name = 'models/conv_lstm_time48_filter32_lyr4_batch2_pred5_trainday55.h5'
+model_name = 'models/conv_lstm_time96_filter32_lyr4_batch2_trainday55.h5'
 
 seq.save(model_name) 
 
