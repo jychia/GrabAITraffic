@@ -1,7 +1,7 @@
 # Grab AI for S.E.A.: Traffic Management Challenge
 by Jia Yuan Chia
 
-This repository is a submission for Grab AI for SEA challenge: [Traffic Management Challenge](https://www.grab.com/sg/aiforsea/).
+This repository is a submission for Grab AI for [SEA challenge](https://www.grab.com/sg/aiforsea/aiforseachallenges/): [Traffic Management Challenge](https://www.grab.com/sg/aiforsea/aiforsea-traffic/).
 
 The competition requires participants to build a model trained on a historical demand dataset, that can forecast demand on a Hold-out test dataset. 
 The model should be able to accurately forecast ahead by T+1 to T+5 time intervals (where each interval is 15-min) given all data up to time T.
